@@ -1,0 +1,180 @@
+# Create an HTML file for the website with embedded games.
+
+website_code = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+        }
+        h1 {
+            margin: 0;
+        }
+        .game-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border: 1px solid #ccc;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Fun Games</h1>
+        <p>Play simple games right in your browser!</p>
+    </header>
+    <main>
+        <div id="menu">
+            <a class="button" onclick="showGame('ticTacToe')">Play Tic-Tac-Toe</a>
+            <a class="button" onclick="showGame('rps')">Play Rock, Paper, Scissors</a>
+        </div>
+
+        <div id="ticTacToe" class="game-container">
+            <h2>Tic-Tac-Toe</h2>
+            <div id="board" class="board"></div>
+            <button class="button" onclick="resetTicTacToe()">Reset</button>
+        </div>
+
+        <div id="rps" class="game-container">
+            <h2>Rock, Paper, Scissors</h2>
+            <p>Choose your move:</p>
+            <button class="button" onclick="playRPS('rock')">Rock</button>
+            <button class="button" onclick="playRPS('paper')">Paper</button>
+            <button class="button" onclick="playRPS('scissors')">Scissors</button>
+            <p id="rpsResult"></p>
+        </div>
+    </main>
+
+    <script>
+        function showGame(gameId) {
+            document.querySelectorAll('.game-container').forEach(game => game.style.display = 'none');
+            document.getElementById(gameId).style.display = 'block';
+        }
+
+        // Tic-Tac-Toe Game
+        const board = document.getElementById('board');
+        let boardState = Array(9).fill(null);
+        let currentPlayer = 'X';
+
+        function createBoard() {
+            board.innerHTML = '';
+            boardState.forEach((cell, index) => {
+                const div = document.createElement('div');
+                div.classList.add('cell');
+                div.innerText = cell || '';
+                div.addEventListener('click', () => makeMove(index));
+                board.appendChild(div);
+            });
+        }
+
+        function makeMove(index) {
+            if (!boardState[index]) {
+                boardState[index] = currentPlayer;
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                createBoard();
+                checkWinner();
+            }
+        }
+
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                    alert(`${boardState[a]} wins!`);
+                    resetTicTacToe();
+                    return;
+                }
+            }
+            if (!boardState.includes(null)) {
+                alert('It\'s a tie!');
+                resetTicTacToe();
+            }
+        }
+
+        function resetTicTacToe() {
+            boardState = Array(9).fill(null);
+            currentPlayer = 'X';
+            createBoard();
+        }
+
+        createBoard();
+
+        // Rock, Paper, Scissors Game
+        function playRPS(playerChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+            const resultDisplay = document.getElementById('rpsResult');
+
+            if (playerChoice === computerChoice) {
+                resultDisplay.innerText = `It's a tie! You both chose ${playerChoice}.`;
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                resultDisplay.innerText = `You win! ${playerChoice} beats ${computerChoice}.`;
+            } else {
+                resultDisplay.innerText = `You lose! ${computerChoice} beats ${playerChoice}.`;
+            }
+        }
+    </script>
+</body>
+</html>
+"""
+
+# Save the code to an HTML file
+file_path = "/mnt/data/School_Games_Website.html"
+with open(file_path, "w") as file:
+    file.write(website_code)
+
+file_path
